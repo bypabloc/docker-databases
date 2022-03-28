@@ -1,0 +1,77 @@
+version: '3.7'
+
+networks:
+    mariadb-10.3.16_network:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.31.0.0/24
+    mysql-8.0.28_network:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.32.0.0/24
+    postgres-13.0-alpine_network:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.33.0.0/24
+
+volumes:
+    mariadb-10.3.16_data:
+    mysql-8.0.28_data:
+    postgres-13.0-alpine_data:
+
+services:
+
+    mariadb-10.3.16:
+        container_name: mariadb
+        image: mariadb:10.3.16
+        restart: always
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_DATABASE: test_db
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_PASSWORD: 123456
+            MYSQL_USER: root
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        volumes:
+            - mariadb-10.3.16_data:/var/lib/mariadb
+        networks:
+            mariadb-10.3.16_network:
+                ipv4_address: 172.31.0.1
+
+    mysql-8.0.28:
+        container_name: mysql
+        image: mysql:8.0.28
+        restart: always
+        command: --default-authentication-plugin=mysql_native_password
+        ports:
+            - "3308:3307"
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_DATABASE: test_db
+            MYSQL_PASSWORD: 123456
+            MYSQL_DB: test_db
+        volumes:
+            - mysql-8.0.28_data:/var/lib/mysql
+        networks:
+            mysql-8.0.28_network:
+                ipv4_address: 172.32.0.1
+
+    postgres-13.0-alpine:
+        container_name: postgres
+        image: postgres:13.0-alpine
+        restart: 'always'
+        volumes:
+            - postgres-13.0-alpine_data:/var/lib/postgresql/data/
+        environment:
+            POSTGRES_DB: test_db
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 123456
+        ports:
+            - "5433:5432"
+        networks:
+            postgres-13.0-alpine_network:
+                ipv4_address: 172.33.0.1
