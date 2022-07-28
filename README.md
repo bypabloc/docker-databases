@@ -12,6 +12,10 @@
 sudo docker-compose up -d --build --remove-orphans --force-recreate
 ```
 
+## Para realizar un restore en la db:
+[MySql](/README-MYSQL.md)
+
+
 ## Nota, comandos docker:
 
 ### Comandos para bajar todos los contenedores:
